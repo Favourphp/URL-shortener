@@ -2,11 +2,9 @@ const express = require('express')
 const mongoose = require('mongoose')
 const ShortUrl = require('./models/shortUrl')
 const app = express()
+const connectDB = require('./db/connect')
+require('dotenv').config()
 
-mongoose.connect("mongodb+srv://favdevs:Fav1234@cluster0.biy2mm1.mongodb.net/04-STORE-API?retryWrites=true&w=majority", {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-});
 
 
 app.set('view engine', 'ejs')
@@ -33,4 +31,16 @@ app.get('/:shortUrl', async (req, res) => {
   res.redirect(shortUrl.full)
 })
 
-app.listen(process.env.PORT || 2000);
+const port = process.env.PORT || 2000;
+
+const start = async() => {
+    try {
+        // connect to DB 
+        await connectDB(process.env.MONGO_URI)
+        app.listen(port, console.log(`server is listening on port ${port}...`))
+    } catch (error) {
+       console.log(error) 
+    }
+}
+
+ start()
